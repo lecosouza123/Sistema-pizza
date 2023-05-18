@@ -209,5 +209,6 @@ function updateCart(){
 
     } else {
         dq('aside').classList.remove('show')
+        dq('aside').style.left = '100vw'
     }
 }
