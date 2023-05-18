@@ -130,14 +130,37 @@ dq('.pizzaInfo--addButton').addEventListener('click', () => {
     updateCart()
     closeModal()
 })
+dq('.menu-openner').addEventListener('click', () => {
+    if(cart.length > 0) {
+        dq('aside').style.left = '0'
+    }
+})
+
+dq('.menu-closer').addEventListener('click', () => {
+    dq('aside').style.left = '100vw'
+})
+
+
 
 function updateCart(){
+    dq('.menu-openner span').innerHTML = cart.length
+
     if(cart.length > 0){
         dq('aside').classList.add('show')
         dq('.cart').innerHTML = '' // para limpar cart
 
+
+
+        let subtotal = 0
+        let desconto = 0
+        let total = 0
+
+
         for(let i in cart){
             let pizzaItem = pizzaJson.find((item) =>item.id == cart[i].id)
+
+            subtotal += pizzaItem.preci * cart[i].qt
+
             let cartPizza = dq('.models .cart--item').cloneNode(true)
 
             let pizzaSizeName // para aparece tamanho no cart
@@ -153,8 +176,7 @@ function updateCart(){
                     pizzaSizeName = 'G'
                     break        
             }
-
-
+            //nome e tamanho no cart
             let pizzaName = `${pizzaItem.name} (${pizzaSizeName})`
 
 
@@ -164,9 +186,11 @@ function updateCart(){
             cartPizza.querySelector('.cart--item-qtmenos').addEventListener('click', ()=> { 
                 if(cart[i].qt > 1){
                     cart[i].qt--
+                }else {
+                    // essa função splice remove um item do carrinho
+                    cart.splice(i, 1) 
+                }
                     updateCart()
-                    }
-    
             })
             cartPizza.querySelector('.cart--item-qtmais').addEventListener('click', ()=> {
                 cart[i].qt++
@@ -174,9 +198,15 @@ function updateCart(){
                 
             })
 
-            dq('.cart').append(cartPizza)
-            
+            dq('.cart').append(cartPizza)     
         }
+        desconto = subtotal * 0.1
+        total = subtotal - desconto
+
+        dq('.subtotal span:last-child').innerHTML = `R$ ${subtotal.toFixed(2)}`
+        dq('.desconto span:last-child').innerHTML = `R$ ${desconto.toFixed(2)}`
+        dq('.total span:last-child').innerHTML = `R$ ${total.toFixed(2)}`
+
     } else {
         dq('aside').classList.remove('show')
     }
